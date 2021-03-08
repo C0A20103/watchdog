@@ -23,7 +23,7 @@ def record():
             recFlg[2] = True
         else:
             recFlg[2] = False
-        while (time.time() < setTime and event.is_set()):
+        while (setTime > time.time() and event.is_set()):
             ret, frame = cap.read()
             frame = cv2.flip(frame, 1)
             cv2.putText(frame,
@@ -38,13 +38,13 @@ def record():
 
             # フレームレート制限
             sleepTime = 1/fps - (time.time() - didTime)
-            if (0 < sleepTime):
+            if (sleepTime > 0):
                 time.sleep(sleepTime)
             didTime = time.time()
 
         # フレームレート制限
         sleepTime = 1 / fps - (time.time() - didTime)
-        if (0 < sleepTime):
+        if (sleepTime > 0):
             time.sleep(sleepTime)
         didTime = time.time()
 
@@ -132,7 +132,7 @@ def main():
 
         # 顔認識
         faceList = cascade.detectMultiScale(gray, minSize=(100, 100))
-        recFlg[1] = True if faceList else False
+        recFlg[1] = True if 0 > len(faceList) else False
         for (x, y, w, h) in faceList:
             frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 225, 0), thickness=3)
 
